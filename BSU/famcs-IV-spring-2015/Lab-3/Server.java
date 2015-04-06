@@ -47,6 +47,8 @@ public class Server implements HttpHandler {
             response = doGet(httpExchange);
         } else if ("POST".equals(httpExchange.getRequestMethod())) {
             doPost(httpExchange);
+        } else if ("DELETE".equals(httpExchange.getRequestMethod())) {
+        	doDelete(httpExchange);
         } else {
             response = "Unsupported http method: " + httpExchange.getRequestMethod();
         }
@@ -54,7 +56,13 @@ public class Server implements HttpHandler {
         sendResponse(httpExchange, response);
     }
 
-    private String doGet(HttpExchange httpExchange) {
+	private void doDelete(HttpExchange httpExchange) throws IOException {
+		String message = messageExchange.inputStreamToString(httpExchange.getRequestBody());
+		System.out.println("Delete message from user = " + message);
+		// TODO: finish the rest of the task
+	}
+
+	private String doGet(HttpExchange httpExchange) {
         String query = httpExchange.getRequestURI().getQuery();
         if (query != null) {
             Map<String, String> map = queryToMap(query);
@@ -69,7 +77,7 @@ public class Server implements HttpHandler {
         return  "Absent query in url";
     }
 
-    private void doPost(HttpExchange httpExchange) {
+    private void doPost(HttpExchange httpExchange) throws IOException {
         try {
             String message = messageExchange.getClientMessage(httpExchange.getRequestBody());
             System.out.println("Get Message from User : " + message);

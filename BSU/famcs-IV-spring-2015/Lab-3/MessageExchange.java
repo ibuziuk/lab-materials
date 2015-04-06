@@ -31,7 +31,7 @@ public class MessageExchange {
         return jsonObject.toJSONString();
     }
 
-    public String getClientMessage(InputStream inputStream) throws ParseException {
+    public String getClientMessage(InputStream inputStream) throws ParseException, IOException {
         return (String) getJSONObject(inputStreamToString(inputStream)).get("message");
     }
 
@@ -39,18 +39,16 @@ public class MessageExchange {
         return (JSONObject) jsonParser.parse(json.trim());
     }
 
-    public String inputStreamToString(InputStream in) {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        byte[] buffer = new byte[1024];
-        int length = 0;
-        try {
-            while ((length = in.read(buffer)) != -1) {
-                baos.write(buffer, 0, length);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return new String(baos.toByteArray());
-    }
+	public String inputStreamToString(InputStream in) throws IOException {
+		StringBuilder out = new StringBuilder();
+		BufferedReader br = new BufferedReader(new InputStreamReader(in));
+		try {
+			for (String line = br.readLine(); line != null; line = br.readLine()) {
+				out.append(line);
+			}
+		} finally {
+			br.close();
+		}
+		return out.toString();
+	}
 }
