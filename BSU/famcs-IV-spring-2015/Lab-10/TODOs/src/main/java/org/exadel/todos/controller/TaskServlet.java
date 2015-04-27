@@ -115,7 +115,7 @@ public class TaskServlet extends HttpServlet {
 	}
 
 	private void loadHistory() throws SAXException, IOException, ParserConfigurationException, TransformerException {
-		if (!XMLHistoryUtil.doesStorageExist()) {
+		if (!XMLHistoryUtil.doesStorageExist()) { // creating storage and history if not exist
 			XMLHistoryUtil.createStorage();
 			addStubData();
 		}

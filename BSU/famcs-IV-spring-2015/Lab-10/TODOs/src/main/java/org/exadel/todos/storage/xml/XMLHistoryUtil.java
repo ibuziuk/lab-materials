@@ -29,7 +29,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 public final class XMLHistoryUtil {
-	private static final String STORAGE_LOCATION = "D://history.xml"; // System.getProperty("user.home") +  File.separator + "history.xml"; // history.xml will be located in the home directory
+	private static final String STORAGE_LOCATION = System.getProperty("user.home") +  File.separator + "history.xml"; // history.xml will be located in the home directory
 	private static final String TASKS = "tasks";
 	private static final String TASK = "task";
 	private static final String ID = "id";
@@ -124,6 +124,10 @@ public final class XMLHistoryUtil {
 	}
 
 	public static synchronized List<Task> getTasks() throws SAXException, IOException, ParserConfigurationException {
+		return getSubTasksByIndex(0); // Return all tasks from history 
+	}
+	
+	public static synchronized List<Task> getSubTasksByIndex(int index) throws ParserConfigurationException, SAXException, IOException {
 		List<Task> tasks = new ArrayList<>();
 		DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
@@ -131,7 +135,7 @@ public final class XMLHistoryUtil {
 		document.getDocumentElement().normalize();
 		Element root = document.getDocumentElement(); // Root <tasks> element
 		NodeList taskList = root.getElementsByTagName(TASK);
-		for (int i = 0; i < taskList.getLength(); i++) {
+		for (int i = index; i < taskList.getLength(); i++) {
 			Element taskElement = (Element) taskList.item(i);
 			String id = taskElement.getAttribute(ID);
 			String description = taskElement.getElementsByTagName(DESCRIPTION).item(0).getTextContent();
@@ -163,23 +167,4 @@ public final class XMLHistoryUtil {
 		transformer.setOutputProperty(OutputKeys.INDENT, "yes");
 		return transformer;
 	}
-
-	public static synchronized List<Task> getSubTasksByIndex(int index) throws ParserConfigurationException, SAXException, IOException {
-		List<Task> tasks = new ArrayList<>();
-		DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-		DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
-		Document document = documentBuilder.parse(STORAGE_LOCATION);
-		document.getDocumentElement().normalize();
-		Element root = document.getDocumentElement(); // Root <tasks> element
-		NodeList taskList = root.getElementsByTagName(TASK);
-		for (int i = index; i < taskList.getLength(); i++) {
-			Element taskElement = (Element) taskList.item(i);
-			String id = taskElement.getAttribute(ID);
-			String description = taskElement.getElementsByTagName(DESCRIPTION).item(0).getTextContent();
-			boolean done = Boolean.valueOf(taskElement.getElementsByTagName(DONE).item(0).getTextContent());
-			tasks.add(new Task(id, description, done));
-		}
-		return tasks;
-	}
-
 }
