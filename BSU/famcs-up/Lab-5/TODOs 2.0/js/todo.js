@@ -10,9 +10,9 @@ function run(){
 	appContainer.addEventListener('dblclick', delegateEvent);
 
 	taskList = loadTasks() || [
-			newTask('Сделать разметку', true),
-			newTask('Выучить JavaScript', true),
-			newTask('Написать чат !')
+			newTask('Learn JavaScript', true),
+			newTask('Install Eclipse Neon.1', true),
+			newTask('Create an amazing Web App!')
 		];
 
 	render(taskList);
